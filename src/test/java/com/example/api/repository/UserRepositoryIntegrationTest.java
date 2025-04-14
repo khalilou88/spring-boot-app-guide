@@ -1,13 +1,13 @@
 package com.example.api.repository;
 
-import com.example.api.ApiApplicationTests;
+import com.example.api.AbstractIntegrationTests;
 import com.example.api.entity.User;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-class UserRepositoryIntegrationTest extends ApiApplicationTests {
+class UserRepositoryIntegrationTest extends AbstractIntegrationTests {
 
     @Autowired
     private UserRepository userRepository;

@@ -1,14 +1,16 @@
 package com.example.api.controller;
 
-import com.example.api.ApiApplicationTests;
+import com.example.api.AbstractIntegrationTests;
 import com.example.api.dto.ProductDTO;
 import com.example.api.entity.Product;
 import com.example.api.repository.ProductRepository;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.web.client.TestRestTemplate;
+import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.core.ParameterizedTypeReference;
-import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -18,7 +20,16 @@ import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-class ProductControllerIntegrationTest extends ApiApplicationTests {
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+class ProductControllerIntegrationTest extends AbstractIntegrationTests {
+
+    @LocalServerPort
+    private int port;
+
+    @Autowired
+    private TestRestTemplate restTemplate;
+
+    private final String baseUrl = "http://localhost:" + port + "/api";
 
     @Autowired
     private ProductRepository productRepository;
@@ -27,6 +38,7 @@ class ProductControllerIntegrationTest extends ApiApplicationTests {
     void tearDown() {
         productRepository.deleteAll();
     }
+
 
     @Test
     void shouldCreateNewProduct() {
@@ -38,8 +50,7 @@ class ProductControllerIntegrationTest extends ApiApplicationTests {
         productDTO.setStockQuantity(100);
 
         // When
-        ResponseEntity<ProductDTO> response = restTemplate.postForEntity(
-                baseUrl + "/products", productDTO, ProductDTO.class);
+        ResponseEntity<ProductDTO> response = restTemplate.postForEntity(baseUrl + "/products", productDTO, ProductDTO.class);
 
         // Then
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.CREATED);
@@ -56,11 +67,8 @@ class ProductControllerIntegrationTest extends ApiApplicationTests {
         createTestProduct("Product 2", new BigDecimal("20.00"), 20);
 
         // When
-        ResponseEntity<List<ProductDTO>> response = restTemplate.exchange(
-                baseUrl + "/products",
-                HttpMethod.GET,
-                null,
-                new ParameterizedTypeReference<List<ProductDTO>>() {});
+        ResponseEntity<List<ProductDTO>> response = restTemplate.exchange(baseUrl + "/products", HttpMethod.GET, null, new ParameterizedTypeReference<List<ProductDTO>>() {
+        });
 
         // Then
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
@@ -75,11 +83,8 @@ class ProductControllerIntegrationTest extends ApiApplicationTests {
         createTestProduct("Regular Product", new BigDecimal("10.00"), 10);
 
         // When
-        ResponseEntity<List<ProductDTO>> response = restTemplate.exchange(
-                baseUrl + "/products/search?name=Special",
-                HttpMethod.GET,
-                null,
-                new ParameterizedTypeReference<List<ProductDTO>>() {});
+        ResponseEntity<List<ProductDTO>> response = restTemplate.exchange(baseUrl + "/products/search?name=Special", HttpMethod.GET, null, new ParameterizedTypeReference<List<ProductDTO>>() {
+        });
 
         // Then
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
@@ -95,11 +100,8 @@ class ProductControllerIntegrationTest extends ApiApplicationTests {
         createTestProduct("Out of Stock", new BigDecimal("10.00"), 0);
 
         // When
-        ResponseEntity<List<ProductDTO>> response = restTemplate.exchange(
-                baseUrl + "/products/in-stock",
-                HttpMethod.GET,
-                null,
-                new ParameterizedTypeReference<List<ProductDTO>>() {});
+        ResponseEntity<List<ProductDTO>> response = restTemplate.exchange(baseUrl + "/products/in-stock", HttpMethod.GET, null, new ParameterizedTypeReference<List<ProductDTO>>() {
+        });
 
         // Then
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);

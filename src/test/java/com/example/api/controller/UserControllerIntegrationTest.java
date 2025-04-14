@@ -1,6 +1,6 @@
 package com.example.api.controller;
 
-import com.example.api.ApiApplicationTests;
+import com.example.api.AbstractIntegrationTests;
 import com.example.api.dto.UserCreationDTO;
 import com.example.api.dto.UserDTO;
 import com.example.api.dto.UserUpdateDTO;
@@ -10,6 +10,7 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.web.client.TestRestTemplate;
+import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
@@ -20,7 +21,17 @@ import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-class UserControllerIntegrationTest extends ApiApplicationTests {
+class UserControllerIntegrationTest extends AbstractIntegrationTests {
+
+
+    @LocalServerPort
+    private int port;
+
+    @Autowired
+    private TestRestTemplate restTemplate;
+
+    private final String baseUrl = "http://localhost:" + port + "/api";
+
 
     @Autowired
     private UserRepository userRepository;
@@ -41,8 +52,7 @@ class UserControllerIntegrationTest extends ApiApplicationTests {
         userCreationDTO.setLastName("User");
 
         // When
-        ResponseEntity<UserDTO> response = restTemplate.postForEntity(
-                baseUrl + "/users", userCreationDTO, UserDTO.class);
+        ResponseEntity<UserDTO> response = restTemplate.postForEntity(baseUrl + "/users", userCreationDTO, UserDTO.class);
 
         // Then
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.CREATED);
@@ -61,11 +71,8 @@ class UserControllerIntegrationTest extends ApiApplicationTests {
         createTestUser("user2", "user2@example.com");
 
         // When
-        ResponseEntity<List<UserDTO>> response = restTemplate.exchange(
-                baseUrl + "/users",
-                HttpMethod.GET,
-                null,
-                new ParameterizedTypeReference<List<UserDTO>>() {});
+        ResponseEntity<List<UserDTO>> response = restTemplate.exchange(baseUrl + "/users", HttpMethod.GET, null, new ParameterizedTypeReference<List<UserDTO>>() {
+        });
 
         // Then
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
@@ -79,8 +86,7 @@ class UserControllerIntegrationTest extends ApiApplicationTests {
         User savedUser = createTestUser("testuser", "test@example.com");
 
         // When
-        ResponseEntity<UserDTO> response = restTemplate.getForEntity(
-                baseUrl + "/users/" + savedUser.getId(), UserDTO.class);
+        ResponseEntity<UserDTO> response = restTemplate.getForEntity(baseUrl + "/users/" + savedUser.getId(), UserDTO.class);
 
         // Then
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
@@ -98,11 +104,7 @@ class UserControllerIntegrationTest extends ApiApplicationTests {
         updateDTO.setLastName("Name");
 
         // When
-        ResponseEntity<UserDTO> response = restTemplate.exchange(
-                baseUrl + "/users/" + savedUser.getId(),
-                HttpMethod.PUT,
-                new HttpEntity<>(updateDTO),
-                UserDTO.class);
+        ResponseEntity<UserDTO> response = restTemplate.exchange(baseUrl + "/users/" + savedUser.getId(), HttpMethod.PUT, new HttpEntity<>(updateDTO), UserDTO.class);
 
         // Then
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
@@ -117,11 +119,7 @@ class UserControllerIntegrationTest extends ApiApplicationTests {
         User savedUser = createTestUser("testuser", "test@example.com");
 
         // When
-        ResponseEntity<Void> response = restTemplate.exchange(
-                baseUrl + "/users/" + savedUser.getId(),
-                HttpMethod.DELETE,
-                null,
-                Void.class);
+        ResponseEntity<Void> response = restTemplate.exchange(baseUrl + "/users/" + savedUser.getId(), HttpMethod.DELETE, null, Void.class);
 
         // Then
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NO_CONTENT);
@@ -131,8 +129,7 @@ class UserControllerIntegrationTest extends ApiApplicationTests {
     @Test
     void shouldReturnNotFoundForNonExistentUser() {
         // When
-        ResponseEntity<UserDTO> response = restTemplate.getForEntity(
-                baseUrl + "/users/999", UserDTO.class);
+        ResponseEntity<UserDTO> response = restTemplate.getForEntity(baseUrl + "/users/999", UserDTO.class);
 
         // Then
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
