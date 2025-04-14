@@ -50,7 +50,7 @@ public abstract class AbstractIntegrationTests {
                 .load();
 
         // Clean and migrate to ensure fresh database state for each test
-        flyway.clean();
+//        flyway.clean();
         flyway.migrate();
 
         // Set Hibernate to validate mode after Flyway creates the schema
