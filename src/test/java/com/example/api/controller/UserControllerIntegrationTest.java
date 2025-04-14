@@ -20,12 +20,7 @@ import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-class UserControllerIntegrationTest  {
-
-
-    protected String baseUrl;
-
-    protected TestRestTemplate restTemplate;
+class UserControllerIntegrationTest extends ApiApplicationTests {
 
     @Autowired
     private UserRepository userRepository;

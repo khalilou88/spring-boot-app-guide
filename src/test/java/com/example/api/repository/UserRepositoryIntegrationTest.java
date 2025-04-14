@@ -7,7 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-class UserRepositoryIntegrationTest  {
+class UserRepositoryIntegrationTest extends ApiApplicationTests {
 
     @Autowired
     private UserRepository userRepository;

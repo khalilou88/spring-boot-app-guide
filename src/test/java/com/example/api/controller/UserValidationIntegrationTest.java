@@ -4,16 +4,11 @@ import com.example.api.ApiApplicationTests;
 import com.example.api.dto.UserCreationDTO;
 import com.example.api.exception.ValidationErrorDetails;
 import org.junit.jupiter.api.Test;
-import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import static org.assertj.core.api.Assertions.assertThat;
 
-class UserValidationIntegrationTest  {
-
-    protected String baseUrl;
-
-    protected TestRestTemplate restTemplate;
+class UserValidationIntegrationTest extends ApiApplicationTests {
 
     private static final String USER_API_PATH = "/api/users";
 
