@@ -1,0 +1,40 @@
+name: Deploy to Production
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up JDK 21
+        uses: actions/setup-java@v4
+        with:
+          java-version: '21'
+          distribution: 'temurin'
+          cache: maven
+
+      - name: Build with Maven
+        run: mvn -B package --file pom.xml -P prod
+
+      - name: Run tests
+        run: mvn test
+
+      # Here you would add steps to deploy to your server
+      # This is just a placeholder example for AWS Elastic Beanstalk
+      - name: Deploy to AWS Elastic Beanstalk
+        if: success()
+        uses: einaregilsson/beanstalk-deploy@v21
+        with:
+          aws_access_key: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws_secret_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          application_name: your-app-name
+          environment_name: your-environment-name
+          version_label: ${{ github.sha }}
+          region: us-east-1
+          deployment_package: target/your-app-name-0.0.1-SNAPSHOT.jar
