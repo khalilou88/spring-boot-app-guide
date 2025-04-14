@@ -1,0 +1,25 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:15-alpine
+    container_name: app_postgres_dev
+    environment:
+      POSTGRES_DB: devdb
+      POSTGRES_USER: devuser
+      POSTGRES_PASSWORD: devpassword
+      PGDATA: /data/postgres
+    volumes:
+      - postgres_data:/data/postgres
+    ports:
+      - "5432:5432"
+    networks:
+      - postgres_network
+    restart: unless-stopped
+
+networks:
+  postgres_network:
+    driver: bridge
+
+volumes:
+  postgres_data:

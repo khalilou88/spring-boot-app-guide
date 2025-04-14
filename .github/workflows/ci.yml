@@ -1,0 +1,44 @@
+name: Java CI with Maven
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main, develop ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    services:
+      # We don't need to specify PostgreSQL here because TestContainers will handle it
+      # This is just to show how you could add service containers if needed
+      redis:
+        image: redis:latest
+        ports:
+          - 6379:6379
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+          cache: maven
+
+      - name: Build with Maven
+        run: mvn -B package --file pom.xml
+
+      - name: Run tests
+        run: mvn test
+
+      - name: Generate JaCoCo coverage report
+        run: mvn jacoco:report
+
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v3
+        with:
+          file: ./target/site/jacoco/jacoco.xml
+          fail_ci_if_error: true
