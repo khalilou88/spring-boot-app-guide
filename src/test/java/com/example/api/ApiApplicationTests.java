@@ -1,7 +1,7 @@
 package com.example.api;
 
 import org.flywaydb.core.Flyway;
-import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -25,19 +25,20 @@ import org.testcontainers.junit.jupiter.Testcontainers;
 @ContextConfiguration(initializers = ApiApplicationTests.TestContainersInitializer.class)
 public class ApiApplicationTests {
 
+    // Static container shared across all test classes extending this base class
     @Container
-    static final PostgreSQLContainer<?> postgresContainer = new PostgreSQLContainer<>("postgres:15-alpine").withDatabaseName("testdb").withUsername("testuser").withPassword("testpassword");
+  protected static final PostgreSQLContainer<?> postgresContainer = new PostgreSQLContainer<>("postgres:15-alpine").withDatabaseName("testdb").withUsername("testuser").withPassword("testpassword");
 
     @LocalServerPort
-    protected int port;
+  static   protected int port;
 
     @Autowired
     protected TestRestTemplate restTemplate;
 
     @Autowired
-    private ApplicationContext applicationContext;
+    static private ApplicationContext applicationContext;
 
-    protected String baseUrl;
+    static  protected String baseUrl;
 
     @DynamicPropertySource
     static void configureProperties(DynamicPropertyRegistry registry) {
@@ -58,8 +59,8 @@ public class ApiApplicationTests {
     }
 
 
-    @BeforeEach
-    void setUp() {
+    @BeforeAll
+    static void setUp() {
         baseUrl = "http://localhost:" + port + "/api";
 
         // Manually apply migrations for tests
@@ -71,10 +72,7 @@ public class ApiApplicationTests {
 
         // Now that Flyway has created the schema, we can set Hibernate to validate mode
         // This will be applied to the next Hibernate session
-        TestPropertySourceUtils.addInlinedPropertiesToEnvironment(
-                (ConfigurableApplicationContext) applicationContext,
-                "spring.jpa.hibernate.ddl-auto=validate"
-        );
+        TestPropertySourceUtils.addInlinedPropertiesToEnvironment((ConfigurableApplicationContext) applicationContext, "spring.jpa.hibernate.ddl-auto=validate");
     }
 
     @Test
