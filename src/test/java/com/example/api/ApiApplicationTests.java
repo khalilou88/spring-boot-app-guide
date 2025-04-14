@@ -66,7 +66,7 @@ public class ApiApplicationTests {
         Flyway flyway = Flyway.configure().dataSource(postgresContainer.getJdbcUrl(), postgresContainer.getUsername(), postgresContainer.getPassword()).locations("classpath:db/migration").load();
 
         // Clean and migrate to ensure fresh database state for each test
-        flyway.clean();
+//        flyway.clean();
         flyway.migrate();
 
         // Now that Flyway has created the schema, we can set Hibernate to validate mode
