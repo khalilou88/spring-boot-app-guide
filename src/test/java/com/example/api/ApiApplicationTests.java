@@ -7,14 +7,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.boot.test.web.server.LocalServerPort;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.ApplicationContextInitializer;
-import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
-import org.springframework.test.context.support.TestPropertySourceUtils;
 import org.testcontainers.containers.PostgreSQLContainer;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
@@ -22,23 +17,23 @@ import org.testcontainers.junit.jupiter.Testcontainers;
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @Testcontainers
 @ActiveProfiles("test")
-@ContextConfiguration(initializers = ApiApplicationTests.TestContainersInitializer.class)
+//@ContextConfiguration(initializers = ApiApplicationTests.TestContainersInitializer.class)
 public class ApiApplicationTests {
 
     // Static container shared across all test classes extending this base class
     @Container
-  protected static final PostgreSQLContainer<?> postgresContainer = new PostgreSQLContainer<>("postgres:15-alpine").withDatabaseName("testdb").withUsername("testuser").withPassword("testpassword");
+    protected static final PostgreSQLContainer<?> postgresContainer = new PostgreSQLContainer<>("postgres:15-alpine").withDatabaseName("testdb").withUsername("testuser").withPassword("testpassword");
 
     @LocalServerPort
-  static   protected int port;
+    static protected int port;
 
     @Autowired
     protected TestRestTemplate restTemplate;
 
-    @Autowired
-    static private ApplicationContext applicationContext;
+//    @Autowired
+//     private static ApplicationContext applicationContext;
 
-    static  protected String baseUrl;
+    static protected String baseUrl;
 
     @DynamicPropertySource
     static void configureProperties(DynamicPropertyRegistry registry) {
@@ -51,12 +46,12 @@ public class ApiApplicationTests {
         registry.add("spring.jpa.hibernate.ddl-auto", () -> "none");
     }
 
-    static class TestContainersInitializer implements ApplicationContextInitializer<ConfigurableApplicationContext> {
-        @Override
-        public void initialize(ConfigurableApplicationContext applicationContext) {
-            // Nothing needed here, just using this to establish test execution order
-        }
-    }
+//    static class TestContainersInitializer implements ApplicationContextInitializer<ConfigurableApplicationContext> {
+//        @Override
+//        public void initialize(ConfigurableApplicationContext applicationContext) {
+//            // Nothing needed here, just using this to establish test execution order
+//        }
+//    }
 
 
     @BeforeAll
@@ -72,7 +67,7 @@ public class ApiApplicationTests {
 
         // Now that Flyway has created the schema, we can set Hibernate to validate mode
         // This will be applied to the next Hibernate session
-        TestPropertySourceUtils.addInlinedPropertiesToEnvironment((ConfigurableApplicationContext) applicationContext, "spring.jpa.hibernate.ddl-auto=validate");
+//        TestPropertySourceUtils.addInlinedPropertiesToEnvironment((ConfigurableApplicationContext) applicationContext, "spring.jpa.hibernate.ddl-auto=validate");
     }
 
     @Test
