@@ -1,6 +1,6 @@
 package com.example.api.controller;
 
-import com.example.api.AbstractIntegrationTest;
+import com.example.api.ApiApplicationTests;
 import com.example.api.dto.ProductDTO;
 import com.example.api.entity.Product;
 import com.example.api.repository.ProductRepository;
@@ -18,7 +18,7 @@ import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-class ProductControllerIntegrationTest extends AbstractIntegrationTest {
+class ProductControllerIntegrationTest extends ApiApplicationTests {
 
     @Autowired
     private ProductRepository productRepository;

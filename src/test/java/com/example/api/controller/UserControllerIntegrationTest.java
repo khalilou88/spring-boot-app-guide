@@ -1,6 +1,6 @@
 package com.example.api.controller;
 
-import com.example.api.AbstractIntegrationTest;
+import com.example.api.ApiApplicationTests;
 import com.example.api.dto.UserCreationDTO;
 import com.example.api.dto.UserDTO;
 import com.example.api.dto.UserUpdateDTO;
@@ -20,7 +20,7 @@ import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-class UserControllerIntegrationTest extends AbstractIntegrationTest {
+class UserControllerIntegrationTest extends ApiApplicationTests {
 
     @Autowired
     private UserRepository userRepository;
